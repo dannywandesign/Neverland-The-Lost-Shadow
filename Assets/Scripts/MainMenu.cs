@@ -1,11 +1,17 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement; // Essential for switching scenes
 
 public class MainMenu : MonoBehaviour
 {
-    public void PlayGame()
+    public void StartGame()
     {
-        // Replace "MainWorld" with the exact name of your scene file
-        SceneManager.LoadScene("MainWorld"); 
+        // Make sure the name inside the quotes matches your Scene file exactly!
+        SceneManager.LoadScene("TutorialScreen");
+    }
+
+    public void QuitGame()
+    {
+        Debug.Log("Player Quit the Game");
+        Application.Quit();
     }
 }

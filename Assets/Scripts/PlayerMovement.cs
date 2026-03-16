@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("References")]
     public Rigidbody2D rb;
     public Animator anim;
+    public GameObject attackHitbox; 
+    public AttackHitbox hitboxScript; 
 
     private float horizontal;
     private bool isGrounded;
@@ -29,26 +31,30 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // 1. Ground and Input Checks
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
-
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        // Jump Logic (Still allowed while attacking!)
+        // 2. DASH OVERRIDE: Stop regular movement logic if dashing
+        if (AbilityManager.instance != null && AbilityManager.instance.isDashing)
+        {
+            return; // Skip the rest of Update while the dash burst is active
+        }
+
+        // 3. Jump Logic
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             anim.SetTrigger("isJumping");
         }
 
-        // Attack Logic
+        // 4. Attack Logic
         if (Input.GetMouseButtonDown(0) && !isAttacking)
         {
             StartCoroutine(AttackRoutine());
         }
 
-        // --- MOVEMENT WHILE ATTACKING ---
-        // We no longer wrap this in "if (!isAttacking)"
-        // This allows Peter to flip and run even if he's swinging
+        // 5. Movement Animations and Flipping
         bool isMoving = Mathf.Abs(horizontal) > 0.1f;
         anim.SetBool("isRunning", isMoving);
 
@@ -60,14 +66,15 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // --- REMOVED THE ATTACK LOCK ---
-        // We removed the code that set velocity to 0 during an attack.
-        // Now physics movement happens every frame regardless of animation state.
+        // 6. DASH OVERRIDE: Prevent physics overwrite during dash
+        if (AbilityManager.instance != null && AbilityManager.instance.isDashing)
+        {
+            return; // Allow the dash velocity from AbilityManager to persist
+        }
+
+        // Regular horizontal movement
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
     }
-
-    public GameObject attackHitbox; // This was missing!
-    public AttackHitbox hitboxScript; // For the delayed kill logic
 
     IEnumerator AttackRoutine()
     {
@@ -76,10 +83,8 @@ public class PlayerMovement : MonoBehaviour
         
         attackHitbox.SetActive(true);
 
-        // Keep the box active for a short window
         yield return new WaitForSeconds(0.3f); 
         
-        // Check for any enemies that entered during that window
         if (hitboxScript != null) hitboxScript.CheckForKills();
 
         yield return new WaitForSeconds(attackDuration - 0.3f);
