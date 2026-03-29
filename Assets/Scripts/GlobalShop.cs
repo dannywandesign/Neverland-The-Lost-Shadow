@@ -1,11 +1,28 @@
 using UnityEngine;
-using TMPro; // Important for TextMeshPro
+using TMPro;
 
 public class GlobalShop : MonoBehaviour
 {
     [Header("UI References")]
     public GameObject shopPanel;
-    public TextMeshProUGUI shardText; // Drag your ShardCounterText here
+    public TextMeshProUGUI shardText; 
+
+    void Start()
+    {
+        // AUTO-FIX: If Unity forgot the link, find them by name
+        if (shopPanel == null)
+        {
+            shopPanel = GameObject.Find("ShopPanel");
+        }
+
+        if (shardText == null)
+        {
+            shardText = GameObject.Find("ShardCounterText")?.GetComponent<TextMeshProUGUI>();
+        }
+
+        // Ensure shop starts closed
+        if (shopPanel != null) shopPanel.SetActive(false);
+    }
 
     void Update()
     {
@@ -17,22 +34,26 @@ public class GlobalShop : MonoBehaviour
 
     public void ToggleShop()
     {
+        if (shopPanel == null)
+        {
+            Debug.LogError("GlobalShop: I can't find 'ShopPanel' in the Hierarchy! Check the name.");
+            return;
+        }
+
         bool isOpening = !shopPanel.activeSelf;
         shopPanel.SetActive(isOpening);
 
         if (isOpening)
         {
             Time.timeScale = 0f; 
-            shardText.color = Color.white; // Turn white in shop
-            
+            if (shardText != null) shardText.color = Color.white;
             Cursor.visible = true; 
             Cursor.lockState = CursorLockMode.None;
         }
         else
         {
             Time.timeScale = 1f; 
-            shardText.color = Color.black; // Turn back to black
-            
+            if (shardText != null) shardText.color = Color.black;
             Cursor.visible = false; 
             Cursor.lockState = CursorLockMode.Locked;
         }

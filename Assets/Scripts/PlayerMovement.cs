@@ -19,8 +19,8 @@ public class PlayerMovement : MonoBehaviour
     public GameObject attackHitbox; 
     public AttackHitbox hitboxScript; 
 
-    [HideInInspector] public float horizontal; // Made public so AbilityManager can see direction
-    public bool isGrounded; // CHANGED TO PUBLIC TO FIX ERROR
+    [HideInInspector] public float horizontal; 
+    public bool isGrounded; 
     private bool isAttacking;
     private Vector3 originalScale;
 
@@ -36,8 +36,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (AbilityManager.instance != null && AbilityManager.instance.isDashing) return;
 
-        // Attack Logic
-        if (Input.GetMouseButtonDown(0) && !isAttacking)
+        // --- UPDATED ATTACK LOGIC (Mouse or F key) ---
+        if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.F)) && !isAttacking)
         {
             StartCoroutine(AttackRoutine());
         }
@@ -55,7 +55,6 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         if (AbilityManager.instance != null && AbilityManager.instance.isDashing) return;
-
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
     }
 

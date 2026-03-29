@@ -1,36 +1,41 @@
 using UnityEngine;
 using TMPro;
 
-public class ShardManager : MonoBehaviour
+public partial class ShardManager : MonoBehaviour
 {
     public static ShardManager instance;
 
-    // Change 'int' to 'public int' so ShopLogic can see it
-    public int shardCount; 
+    public int shardCount = 0;
+    private int totalShardsInLevel = 0; 
     public TextMeshProUGUI shardText;
 
     void Awake()
     {
-        instance = this;
+        if (instance == null) instance = this;
+        else Destroy(this);
     }
 
     void Start()
     {
-        // Reset shards on scene load as requested earlier
+        if (shardText == null)
+            shardText = GameObject.Find("ShardCounterText")?.GetComponent<TextMeshProUGUI>();
+
+        // Find all objects with the Shard script to set the max goal
+        Shard[] allShards = Object.FindObjectsByType<Shard>(FindObjectsSortMode.None);
+        totalShardsInLevel = allShards.Length;
+
+        UpdateUI();
+    }
+
+    public void AddShard(int amount)
+    {
+        shardCount += amount;
+        UpdateUI();
+    }
+
+    public void ResetShards()
+    {
         shardCount = 0;
-        UpdateUI();
-    }
-
-    public void AddShard()
-    {
-        shardCount++;
-        UpdateUI();
-    }
-
-    // Add this new function so ShopLogic can subtract shards
-    public void RemoveShards(int amount)
-    {
-        shardCount -= amount;
         UpdateUI();
     }
 
@@ -38,7 +43,8 @@ public class ShardManager : MonoBehaviour
     {
         if (shardText != null)
         {
-            shardText.text = "SHARDS = " + shardCount;
+            // Now shows "SHARDS: 0/10"
+            shardText.text = "SHARDS: " + shardCount + "/" + totalShardsInLevel;
         }
     }
 }

@@ -1,17 +1,42 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Essential for switching scenes
+using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public void StartGame()
+    // This variable stays true as long as the game is open.
+    // It resets to false only when the app is fully closed and restarted.
+    private static bool hasClearedProgressThisSession = false;
+
+    void Awake()
     {
-        // Make sure the name inside the quotes matches your Scene file exactly!
-        SceneManager.LoadScene("TutorialScreen");
+        if (!hasClearedProgressThisSession)
+        {
+            ResetAllProgress();
+            hasClearedProgressThisSession = true;
+            Debug.Log("New Session Started: All world progress and shards cleared.");
+        }
+    }
+
+    public void GoToWorlds()
+    {
+        SceneManager.LoadScene("Worlds");
     }
 
     public void QuitGame()
     {
-        Debug.Log("Player Quit the Game");
         Application.Quit();
+    }
+
+    private void ResetAllProgress()
+    {
+        // Deletes everything: Unlocked worlds AND Banked Shards
+        PlayerPrefs.DeleteAll();
+        
+        // If you only want to delete worlds but KEEP shards, use this instead:
+        // PlayerPrefs.DeleteKey("World1_Unlocked");
+        // PlayerPrefs.DeleteKey("World2_Unlocked");
+        // ... etc
+        
+        PlayerPrefs.Save();
     }
 }

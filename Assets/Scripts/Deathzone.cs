@@ -1,27 +1,23 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Useful if you want to restart the whole level
+using UnityEngine.SceneManagement;
 
 public class Deathzone : MonoBehaviour
 {
-    // You can set these in the Inspector to Peter's starting coordinates
-    public Vector2 spawnPoint;
-
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Check if the object entering the zone is the Player
-        if (other.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
-            // Option A: Teleport the player back to the start
-            other.transform.position = new Vector3(spawnPoint.x, spawnPoint.y, other.transform.position.z);
-            
-            // Optional: Reset the player's velocity so they don't keep falling/moving
-            Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
-            if (rb != null)
+            // 1. Reset the shards in the manager
+            if (ShardManager.instance != null)
             {
-                rb.linearVelocity = Vector2.zero;
+                ShardManager.instance.ResetShards();
             }
 
-            Debug.Log("Peter fell! Returning to start.");
+            // 2. Reload the scene (This is the best way to make sure 
+            // all physical shards respawn on the map too!)
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            
+            Debug.Log("Peter fell! Shards lost, returning to start.");
         }
     }
 }

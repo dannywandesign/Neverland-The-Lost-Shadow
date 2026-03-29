@@ -2,51 +2,24 @@ using UnityEngine;
 
 public class ShopLogic : MonoBehaviour
 {
-    public void BuyDash()
+    public void PressGrowButton()
     {
-        if (ShardManager.instance.shardCount >= 15)
+        // 1. Tell Peter to start growing/gambling
+        if (AbilityManager.instance != null)
         {
-            ShardManager.instance.RemoveShards(15);
-            AbilityManager.instance.canDash = true;
-            CloseShop();
+            AbilityManager.instance.GrowPlayer();
         }
-    }
 
-    public void BuyGlide()
-    {
-        if (ShardManager.instance.shardCount >= 10)
-        {
-            ShardManager.instance.RemoveShards(10);
-            AbilityManager.instance.canGlide = true;
-            CloseShop();
-        }
-    }
-
-    public void BuyDoubleJump()
-    {
-        // UPDATED: Price changed from 25 to 20 shards
-        if (ShardManager.instance.shardCount >= 20)
-        {
-            ShardManager.instance.RemoveShards(20);
-            AbilityManager.instance.canDoubleJump = true;
-            CloseShop();
-        }
-    }
-
-    public void GrowUp()
-    {
-        int randomShards = Random.Range(5, 11);
-        for (int i = 0; i < randomShards; i++)
-        {
-            ShardManager.instance.AddShard();
-        }
-        AbilityManager.instance.BecomeMature();
+        // 2. Close the shop immediately
         CloseShop();
     }
 
     private void CloseShop()
     {
-        // This finds the GlobalShop script on the parent and toggles it off
-        GetComponentInParent<GlobalShop>().ToggleShop();
+        // This looks for the GlobalShop script on the parent object to turn the UI off
+        if (GetComponentInParent<GlobalShop>() != null)
+        {
+            GetComponentInParent<GlobalShop>().ToggleShop();
+        }
     }
 }
