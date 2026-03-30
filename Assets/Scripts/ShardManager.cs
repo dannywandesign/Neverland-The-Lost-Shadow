@@ -6,7 +6,7 @@ public partial class ShardManager : MonoBehaviour
     public static ShardManager instance;
 
     public int shardCount = 0;
-    private int totalShardsInLevel = 0; 
+    public int totalShardsInLevel = 0; 
     public TextMeshProUGUI shardText;
 
     void Awake()
