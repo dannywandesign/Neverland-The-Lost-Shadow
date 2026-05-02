@@ -176,8 +176,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "You Have Gotten Your Shadow Back \nCongratulations!!!\nHope You Have a
-    Fun Adventure!"
+  m_text: You Collected all the Remaining Scrolls and Made it Back Alive to Write
+    the End! Was it worth it though?
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bfd82da91aedebb40842bba8740d21b6, type: 2}
   m_sharedMaterial: {fileID: 7175211324082872406, guid: bfd82da91aedebb40842bba8740d21b6, type: 2}
